@@ -100,9 +100,9 @@ function actionMenu(){
 function getNeighbourhood(pos){
 	var a=[];
 	if (map[pos[0]-1] && map[pos[0]-1][pos[1]])
-		a.push(map[pos[0]-1][pos[0]]);
+		a.push(map[pos[0]-1][pos[1]]);
 	if (map[pos[0]+1] && map[pos[0]+1][pos[1]])
-		a.push(map[pos[0]+1][pos[0]]);
+		a.push(map[pos[0]+1][pos[1]]);
 	if (map[pos[0]][pos[1]-1])
 		a.push(map[pos[0]][pos[1]-1]);
 	if (map[pos[0]][pos[1]+1])
