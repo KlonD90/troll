@@ -1,11 +1,12 @@
 'use strict';
 	/*map width and map height*/
-var w=400, h=200, i=0, j=0, fc=0, map = []; //fc - forts count
+var w=80, h=50, i=0, j=0, map = [];
 
 var types = {avatar: 'avatar', fort: 'fort', knight: 'knight', troll: 'troll', corpse: 'corpse', animal: 'animal'};
 var screenEl = document.getElementById('gamescreen');
 for(;i<w;i++)
 {
+	var j=0;
 	let row = [];
 	for (;j<h;j++)
 		row.push(0);
@@ -17,142 +18,22 @@ for(;i<w;i++)
 // 		pos: 2
 // 	}
 // };
-var A = {
-	type: types.avatar,
-	mhp: 10,//max hp
-	chp: 10,//current hp
-	r: 0.5,//regen,
-	i: [],//items
-	s: 1,//placement slots
-	r: { // restrictions
-		pos: 2 //how far to another type 
-	}
-};
 
-var F = {
-	type: types.fort,
-	mhp: 100,
-	chp: 100,
-	r: 0,
-	i: [],
-	s: [2, 2],
-	r: {
-		'betweenSelf': [cw, ch],
-	}
-}
 //hero default position
 // map[500][500] = A;
+
+
+
+var screenEl = document.getElementById('gamescreen')
+
+//status 0=peace 1=aggro
+//range aggro range
+
+//hero default position
+// map[100][100] = A;
 //camera position and size(width, height)
-var cpx=300, cpy=250, cw=60, ch=20;
-
-function generateWorld(){
-	for (var t in types) {
-		window['generate'+t.charAt(0).toUpperCase() + t.slice(1)]();
-	}
-	paint();
-}
-
-function rand(){
-	var randX = Math.floor(Math.random() * w);
-	var randY = Math.floor(Math.random() * h);
-	return [randX, randY];
-}
-
-function generateAvatar(){
-	var randCoords = rand();
-	map[randCoords[0]][randCoords[1]] = A;
-}
-
-function generateKnight(){
-
-}
-
-function generateTroll(){
-
-}
-
-function generateAnimal(){
-
-}
-
-function checkCollision(coords, type) {
-	debugger;
-	switch (type) {
-		case types.fort:
-			for (var i=coords[0] - 5; i < coords[0] + 5; i++){
-				for (var j=coords[1] - 5; j < coords[1] + 5; i++){
-					if (map[i] && map[i][j])
-						return true;
-				}
-			}
-			return false;
-			break;
-		default:
-			break;
-	}
-}
-function generateFort(){
-	function allowFortPlacement(forts, randCoords){
-		var maxCoordX = Math.max(forts[fc]['x'], randCoords);
-		var minCoordX = Math.min(forts[fc]['x'], randCoords);
-		var maxCoordY = Math.max(forts[fc]['y'], randCoords);
-		var minCoordY = Math.min(forts[fc]['y'], randCoords);
-		var allowByX = (maxCoordX - minCoordX) > 3*cw;
-		var allowByY = (maxCoordY - minCoordY) > 3*ch;
-		return allowByX && allowByY;
-	}
-	while (fc < 2) {
-		var randCoords = rand();
-		var forts = {};
-		
-
-		if (fc > 0) {
-
-			if (!allowFortPlacement(forts, randCoords)) {
-				return generateFort();
-			}
-		}
-
-		if (checkCollision(randCoords, F.type)){
-			return generateFort();			
-		}
-
-		if ( (randCoords[0] == 0) && (randCoords[1] == 0) ) {
-			for (var i; i < F.s[0]; i++ ) {
-				for (var j; j < F.s[1]; j++) {
-					forts[fc]['x'] = randCoords[0];
-					forts[fc]['y'] = randCoords[1];
-					map[randCoords[0] + i][randCoords[1] + j] = F;
-				}
-			}
-		}
-		else if ( (randCoords[0] == w) && (randCoords[1] == h) ) {
-			for (var i; i < F.s[0]; i++ ) {
-				for (var j; j < F.s[1]; j++) {
-					forts[fc]['x'] = randCoords[0];
-					forts[fc]['y'] = randCoords[1];
-					map[randCoords[0] - i][randCoords[1] - j] = F;
-				}
-			}
-		}
-		else {
-			for (var i; i < F.s[0]; i++ ) {
-				for (var j; j < F.s[1]; j++) {
-					forts[fc]['x'] = randCoords[0];
-					forts[fc]['y'] = randCoords[1];
-					map[randCoords[0] + i][randCoords[1] + j] = F;
-				}
-			}
-		}
-		
-		fc++;
-	}
-}
-
-function generateCorpse(){
-}
-
-
+var cpx=0, cpy=0, cw=60, ch=20, curpos=[0,0];
+moveCamera();
 
 function paint(){
 	var screen = [];
@@ -173,13 +54,15 @@ function paint(){
 		{
 			if (!screen[i][j])
 			{
-				html+=renderSymbol('t','~');
+				html+=renderSymbol('t','.');
 				continue;
 			}
 			switch(screen[i][j].type){
 				case types.avatar:
 					html+=renderSymbol('A', '@');
 					break;
+				case types.fort:
+					html+=renderSymbol('F','F');
 				default:
 					break;
 			}
@@ -187,6 +70,7 @@ function paint(){
 		html+='<br/>';
 	}
 	screenEl.innerHTML=html;
+	paintPanel();
 }
 
 generateWorld();
@@ -207,3 +91,48 @@ function resize(){
 resize();
 
 window.onresize = resize;
+//check valid of location
+function checkValidMoveLocation(pos){
+	if (pos[0]>w || pos[1]>h || pos[0]<0 || pos[1]<0 || map[pos[0]]==undefined || map[pos[0]][pos[1]]===undefined)
+		return false;
+	if (map[pos[0]][pos[1]])
+	{
+		let t= map[pos[0]][pos[1]].type;
+		return t=='bait' || t=='corpse';
+	}
+	return true;
+}
+
+function checkValidAtackLocation(pos){
+	if (pos[0]>w || pos[1]>h || pos[0]<0 || pos[1]<0 || !map[pos[0]][pos[1]])
+		return false;
+	return true;
+}
+
+function move(from, direction, l){
+	var to = [from[0]+direction[0], from[1]+direction[1]];
+	if (checkValidMoveLocation(to)){
+		var tmp = map[from[0]][from[1]];
+		map[to[0]][to[1]] = tmp;
+		map[from[0]][from[1]] = 0;
+		if (tmp.type == types.avatar)
+		{
+			curpos = to;
+			moveCamera();
+			LogPanel.log('Move to '+l+'.');
+		}
+	}
+}
+
+function moveCamera(){
+	cpx=Math.round(curpos[0] - cw/2);
+	cpy=Math.round(curpos[1] - ch/2);
+	if (cpx<0)
+		cpx=0;
+	if (cpx+cw>w)
+		cpx=w-cw;
+	if (cpy<0)
+		cpy=0;
+	if(cpy+ch>h)
+		cpy=h-ch;
+}
