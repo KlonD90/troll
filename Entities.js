@@ -69,10 +69,10 @@ function Chest(){
 
 var A = {
 	type: types.avatar,
-	mhp: 10,//max hp
-	chp: 10,//current hp
+	mhp: 30,//max hp
+	chp: 30,//current hp
 	r: 0.5,//regen,
-	dmg: 2,
+	dmg: 3,
 	i: []//items
 };
 var entitiesList = [A];
