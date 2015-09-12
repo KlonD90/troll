@@ -1,0 +1,16 @@
+.t{
+    color: green;
+    vertical-align: sub;
+}
+
+.A{
+    color: yellow;
+}
+
+body{
+    font-smooth: always;
+    background: black;
+    font-family:"Courier New", Courier, monospace;
+    font-weight: 700;
+    -webkit-font-smoothing: subpixel-antialiased;
+}
