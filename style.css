@@ -5,8 +5,17 @@
 .A{
     color: yellow;
 }
+.a{
+    color: magenta;
+}
 .F{
 	color: purple;
+}
+.T{
+    color: red;
+}
+.C{
+    color: darkcyan;
 }
 #panel{
     position: fixed;
@@ -21,13 +30,25 @@
     bottom: 0;
     color: #ddd;
     border-top: 2px solid #ddd;
+    border-left: 2px solid #ddd;
     padding-top: 10px;
+    padding-left: 10px;
     height: 10%;
     min-height: 100px;
     overflow-y: scroll;
-    left: 0;
+    width: 20%;
     right: 0;
     background: black;
+}
+#actions{
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    border: 2px solid #ddd;
+    color: #ddd;
+    background: black;
+    transform: translate(-50%, -50%);
+    display: none;
 }
 body{
     font-smooth: always;
@@ -35,4 +56,12 @@ body{
     font-family:"Courier New", Courier, monospace;
     font-weight: 700;
     -webkit-font-smoothing: subpixel-antialiased;
+}
+.a-btn{
+    border: 2px solid #ddd;
+    color: #ddd;
+    padding: 5px;
+    display: block;
+    background: black;
+    margin: 5px;
 }

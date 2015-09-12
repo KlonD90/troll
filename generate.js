@@ -25,7 +25,7 @@ function generateKnight(){
 }
 
 function generateTroll(){
-
+	var randCoords = rand();
 }
 
 function generateAnimal(){

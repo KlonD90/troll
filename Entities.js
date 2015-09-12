@@ -7,7 +7,8 @@ function Knight(){
 		chp: 30,
 		dmg: 2,
 		r: 1,
-		status: 0
+		status: 0,
+		aggro: null
 	};
 }
 function Troll(){
@@ -19,7 +20,8 @@ function Troll(){
 		r: 2,
 		xp: 0,
 		level: 1,
-		status: 0
+		status: 0,
+		aggro: null
 	}
 }
 function Animal(){
@@ -29,7 +31,8 @@ function Animal(){
 		chp: 20,
 		dmg: 1,
 		r: 0.5,
-		status: 0
+		status: 0,
+		aggro: null
 	}
 }
 function Corpse(entity){
@@ -53,7 +56,8 @@ function Fort(){
 		chp: 100,
 		r: 10,
 		dmg: 10,
-		status: 0
+		status: 0,
+		aggro: null
 	};
 }
 
@@ -62,6 +66,7 @@ var A = {
 	mhp: 10,//max hp
 	chp: 10,//current hp
 	r: 0.5,//regen,
+	dmg: 2,
 	i: []//items
 };
 var entitiesList = [A];
@@ -87,4 +92,13 @@ function dieEntity(entity, position){
 function deleteEntity(entity, position){
 	map[position[0]][position[1]] = 0;
 	entitiesList.splice(entitiesList.indexOf(entity), 1);
+}
+
+function getEntityPosition(entity){
+	var pos = null;;
+	iterateOverMap(function(p, x){
+		if (x==entity)
+			pos = p;
+	});
+	return pos;
 }

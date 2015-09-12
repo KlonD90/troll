@@ -1,5 +1,5 @@
 'use strict';
-	/*map width and map height*/
+/*map width and map height*/
 var w=80, h=50, i=0, j=0, map = [];
 
 var types = {avatar: 'avatar', fort: 'fort', knight: 'knight', troll: 'troll', corpse: 'corpse', animal: 'animal'};
@@ -63,6 +63,16 @@ function paint(){
 					break;
 				case types.fort:
 					html+=renderSymbol('F','F');
+					break;
+				case types.troll:
+					html+=renderSymbol('T','T');
+					break;
+				case types.corpse:
+					html+=renderSymbol('C','o');
+					break;
+				case types.animal:
+					html+=renderSymbol('a','d');
+					break;
 				default:
 					break;
 			}
@@ -98,18 +108,23 @@ function checkValidMoveLocation(pos){
 	if (map[pos[0]][pos[1]])
 	{
 		let t= map[pos[0]][pos[1]].type;
-		return t=='bait' || t=='corpse';
+		return false;
 	}
 	return true;
 }
 
-function checkValidAtackLocation(pos){
-	if (pos[0]>w || pos[1]>h || pos[0]<0 || pos[1]<0 || !map[pos[0]][pos[1]])
+function checkValidAttackLocation(pos){
+	if (pos[0]>w || pos[1]>h || pos[0]<0 || pos[1]<0 || map[pos[0]]==undefined || map[pos[0]][pos[1]]===undefined)
 		return false;
-	return true;
+	if (map[pos[0]][pos[1]])
+	{
+		let t= map[pos[0]][pos[1]].type;
+		return t==types.knight || t==types.troll || t==types.avatar || t==types.animal;
+	}
+	return false;
 }
 
-function move(from, direction, l){
+function move(from, direction, l, log){
 	var to = [from[0]+direction[0], from[1]+direction[1]];
 	if (checkValidMoveLocation(to)){
 		var tmp = map[from[0]][from[1]];
@@ -121,7 +136,44 @@ function move(from, direction, l){
 			moveCamera();
 			LogPanel.log('Move to '+l+'.');
 		}
+		if (log)
+			LogPanel.log(log);
 	}
+}
+
+function damage(dmg){
+	return Math.round((dmg-1)*Math.random())+1;
+}
+function attack(from, to, l){
+	if (checkValidAttackLocation(to)){
+		var attacker = map[from[0]][from[1]];
+		var target = map[to[0]][to[1]];
+		var deal = damage(attacker.dmg);
+		target.chp-=deal;
+		var at = attacker.type;
+		var tt = target.type;
+		if (target.status!=undefined)
+			target.status = 1;
+		target.aggro = attacker;
+		LogPanel.log(at[0].toUpperCase()+at.substr(1)+' attack '+ tt+'. Deal '+deal+' damage.');
+		if (target.chp<=0)
+		{
+			dieEntity(target, to);
+			if (target.type==types.avatar)
+			{
+				pause();
+
+			}
+			if (attacker.aggro)
+			{
+				attacker.aggro = null;
+				attacker.status = 0;
+			}
+			LogPanel.log(tt[0].toUpperCase() +tt.substr(1)+' die.');
+		}
+	}
+	else
+		move(from, [to[0]-from[0], to[1]-from[1]], l);
 }
 
 function moveCamera(){
@@ -135,4 +187,14 @@ function moveCamera(){
 		cpy=0;
 	if(cpy+ch>h)
 		cpy=h-ch;
+}
+
+function iterateOverMap(f){
+	for (var i=0;i<w;i++)
+	{
+		for(var j=0;j<h;j++)
+		{
+			f([i, j], map[i][j]);
+		}
+	}
 }
