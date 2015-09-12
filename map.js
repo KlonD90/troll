@@ -1,27 +1,24 @@
 'use strict';
 	/*map width and map height*/
-var w=1000, h=1000, i=0, j=0, map = [];
+var w=150, h=130, i=0, map = [];
 for(;i<w;i++)
 {
+	var j=0;
 	let row = [];
 	for (;j<h;j++)
 		row.push(0);
 	map.push(row);
 }
-var types = {avatar: 'avatar', knight: 'knight', troll: 'troll', corpse: 'corpse', animal: 'animal', fort: 'fort'};
 var screenEl = document.getElementById('gamescreen')
-var A = {
-	type: types.avatar,
-	mhp: 10,//max hp
-	chp: 10,//current hp
-	r: 0.5,//regen,
-	i: []//items
-};
-//hero default position
-map[500][500] = A;
-//camera position and size(width, height)
-var cpx=470, cpy=490, cw=60, ch=20;
 
+//status 0=peace 1=aggro
+//range aggro range
+
+//hero default position
+map[100][100] = A;
+//camera position and size(width, height)
+var cpx=0, cpy=0, cw=60, ch=20, curpos=[100,100];
+moveCamera();
 function paint(){
 	var screen = [];
 	for (var i=cpx; i<cpx+cw;i++)
@@ -41,7 +38,7 @@ function paint(){
 		{
 			if (!screen[i][j])
 			{
-				html+=renderSymbol('t','~');
+				html+=renderSymbol('t','.');
 				continue;
 			}
 			switch(screen[i][j].type){
@@ -55,6 +52,7 @@ function paint(){
 		html+='<br/>';
 	}
 	screenEl.innerHTML=html;
+	paintPanel();
 }
 
 paint();
@@ -75,3 +73,48 @@ function resize(){
 resize();
 
 window.onresize = resize;
+//check valid of location
+function checkValidMoveLocation(pos){
+	if (pos[0]>w || pos[1]>h || pos[0]<0 || pos[1]<0 || map[pos[0]]==undefined || map[pos[0]][pos[1]]===undefined)
+		return false;
+	if (map[pos[0]][pos[1]])
+	{
+		let t= map[pos[0]][pos[1]].type;
+		return t=='bait' || t=='corpse';
+	}
+	return true;
+}
+
+function checkValidAtackLocation(pos){
+	if (pos[0]>w || pos[1]>h || pos[0]<0 || pos[1]<0 || !map[pos[0]][pos[1]])
+		return false;
+	return true;
+}
+
+function move(from, direction, l){
+	var to = [from[0]+direction[0], from[1]+direction[1]];
+	if (checkValidMoveLocation(to)){
+		var tmp = map[from[0]][from[1]];
+		map[to[0]][to[1]] = tmp;
+		map[from[0]][from[1]] = 0;
+		if (tmp.type == types.avatar)
+		{
+			curpos = to;
+			moveCamera();
+			LogPanel.log('Move to '+l+'.');
+		}
+	}
+}
+
+function moveCamera(){
+	cpx=Math.round(curpos[0] - cw/2);
+	cpy=Math.round(curpos[1] - ch/2);
+	if (cpx<0)
+		cpx=0;
+	if (cpx+cw>w)
+		cpx=w-cw;
+	if (cpy<0)
+		cpy=0;
+	if(cpy+ch>h)
+		cpy=h-ch;
+}

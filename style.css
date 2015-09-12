@@ -1,12 +1,31 @@
 .t{
     color: green;
-    vertical-align: sub;
 }
 
 .A{
     color: yellow;
 }
-
+#panel{
+    position: fixed;
+    right: 0;
+    top: 0;
+    border: 2px solid #ddd;
+    color: #ddd;
+    padding: 10px;
+}
+#console{
+    position: fixed;
+    bottom: 0;
+    color: #ddd;
+    border-top: 2px solid #ddd;
+    padding-top: 10px;
+    height: 10%;
+    min-height: 100px;
+    overflow-y: scroll;
+    left: 0;
+    right: 0;
+    background: black;
+}
 body{
     font-smooth: always;
     background: black;
