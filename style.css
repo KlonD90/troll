@@ -8,6 +8,12 @@
 .F{
 	color: purple;
 }
+.C{
+	color: orange;
+}
+.K{
+	color: red;
+}
 #panel{
     position: fixed;
     right: 0;

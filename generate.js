@@ -25,25 +25,104 @@ function generateKnight(){
 }
 
 function generateTroll(){
+	var randCoords = rand();
+	var tc = 0;
 
+	while (tc < 1){
+
+		if (checkCollision(randCoords, types.troll)){
+			continue;		
+		}
+		createEntity(Troll, randCoords);
+		tc++;
+	}
 }
 
 function generateAnimal(){
 
 }
 
+function generateChest(){
+
+}
+
+function generateKnight(){
+
+}
+
+function generateBait(){
+
+}
+
+function generateCamp(){
+	var cc = 0;
+	var stKnightPos;
+	var ndKnightPos;
+	var rdKnightPos;
+	var chPos = [];
+
+	while (cc < 3) {
+
+		var campTopLeft = rand(6);
+		// var campsPos = [];		
+
+		// if (cc > 0) {
+
+		// 	if (!allowFortPlacement(randCoords)) {
+		// 		continue;
+		// 	}
+		// }
+
+		if (checkCollision(campTopLeft, types.camp)){
+			continue;		
+		}
+
+		stKnightPos = [campTopLeft[0] + 2, campTopLeft[1]];
+		createEntity(Knight, stKnightPos);
+
+		ndKnightPos = [campTopLeft[0], campTopLeft[1] + 2];
+		createEntity(Knight, ndKnightPos);
+
+		rdKnightPos = [campTopLeft[0] + 4, campTopLeft[1] + 2];
+		createEntity(Knight, rdKnightPos);
+
+		chPos = [campTopLeft[0] + 2, campTopLeft[1] + 2]
+		createEntity(Chest, chPos);
+		
+		cc++;
+	}
+}
+
 function checkCollision(coords, type) {
+	var coordX, coordY, conditionX, conditionY;
 	switch (type) {
-		case types.fort:
-			for (var i=coords[0] - 5; i < coords[0] + 5; i++){
-				for (var j=coords[1] - 5; j < coords[1] + 5; j++){
+		case types.camp:
+			var coordX = ( (coords[0] - 10) >= 0) ? coords[0] - 10 : 0;
+			var coordY = ( (coords[1] - 10) >= 0) ? coords[1] - 10 : 0;
+			conditionX = ( (coords[0] + 10) <= w) ? coords[0] + 10 : w;
+			conditionY = ( (coords[1] + 10) <= h) ? coords[1] + 10 : h;
+
+			for (var i=coordX; i < conditionX; i++){
+				for (var j=coordY; j < conditionY; j++){
 					if (map[i] && map[i][j])
 						return true;
 				}
 			}
 			return false;
-			break;
+		case types.fort:
 		default:
+			coordX = ( (coords[0] - 5) >= 0) ? coords[0] - 5 : 0;
+			coordY = ( (coords[1] - 5) >= 0) ? coords[1] - 5 : 0;
+			conditionX = ( (coords[0] + 5) <= w) ? coords[0] + 5 : w;
+			conditionY = ( (coords[1] + 5) <= h) ? coords[1] + 5 : h;
+
+			for (var i=coordX; i < conditionX; i++){
+				for (var j=coordY; j < conditionY; j++){
+					if (map[i] && map[i][j])
+						return true;
+				}
+			}
+			return false;
 			break;
 	}
 }

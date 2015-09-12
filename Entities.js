@@ -1,4 +1,4 @@
-var types = {avatar: 'avatar', knight: 'knight', troll: 'troll', corpse: 'corpse', animal: 'animal', fort: 'fort', bait: 'bait'};
+var types = {avatar: 'avatar', knight: 'knight', troll: 'troll', corpse: 'corpse', animal: 'animal', fort: 'fort', bait: 'bait', chest: 'chest', camp: 'camp'};
 
 function Knight(){
 	return {
@@ -55,6 +55,12 @@ function Fort(){
 		dmg: 10,
 		status: 0
 	};
+}
+
+function Chest(){
+	return {
+		type: types.chest
+	}
 }
 
 var A = {

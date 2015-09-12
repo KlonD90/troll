@@ -2,7 +2,6 @@
 	/*map width and map height*/
 var w=80, h=50, i=0, j=0, map = [];
 
-var types = {avatar: 'avatar', fort: 'fort', knight: 'knight', troll: 'troll', corpse: 'corpse', animal: 'animal'};
 var screenEl = document.getElementById('gamescreen');
 for(;i<w;i++)
 {
@@ -63,6 +62,16 @@ function paint(){
 					break;
 				case types.fort:
 					html+=renderSymbol('F','F');
+					break;
+				case types.chest:
+					html+=renderSymbol('C', '$');
+					break;
+				case types.knight:
+					html+=renderSymbol('K', 'K');
+					break;
+				case types.troll:
+					html+=renderSymbol('T', 'T');
+					break;
 				default:
 					break;
 			}
